@@ -43,6 +43,10 @@ public class SeamCarver {
 		 * 
 		 */
 		
+		
+		int W = img.getWidth();
+		int H = img.getHeight();
+		
 		int[][] sobelHoriz = {{-1, 0, 1},
 							  {-2, 0, 2},
 							  {-1, 0, 1}};
@@ -53,9 +57,7 @@ public class SeamCarver {
 		
 		
 		float[][] energyMap = new float[img.getWidth()][img.getHeight()];
-		
-		int W = img.getWidth();
-		int H = img.getHeight();
+	
 		
 		for(int col = 0; col < W; col++) { // j
 			for(int row = 0; row < H; row++) { // i
@@ -75,7 +77,6 @@ public class SeamCarver {
 						if(col +1 >= W) {
 							break;
 						}
-						
 						redGradient[0] += img.getRed(col + k, row + l) * sobelHoriz[k+1][l+1];
 						redGradient[1] += img.getRed(col + k, row + l) * sobelVert[k+1][l+1];
 						
@@ -126,33 +127,55 @@ public class SeamCarver {
 		
 	}
 	
+	static float max(float[][] a) {
+		float m = a[0][0];
+		for (int r = 0; r < a.length; r++) { //
+			for (int k = 0; k < a[0].length; k++) //
+				if (a[r][k] > m) { // finds a max value
+					m = a[r][k]; //
+
+				}
+		}
+
+		return m;
+	}
+	
+	static int map(float x, float in_min, float in_max, int out_min, int out_max) {
+		return (int) Math.floor((Math.log(x)*10 - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+	}
 	
 	public static void main(String[] args) {
 		ImageData s =  new ImageData("Test.jpg");
 		int[] a = new int[2];
 		
 		float[][] energy = dual_gradient_energy(s);
+		//float max = max(energy);
 		
-		System.out.print("[");
-		for(float[] i : energy) {
-			System.out.print("[");
-			for(float f : i) {
-				System.out.print(i + ", ");
+		for(int i = 0; i < energy.length; i++) {
+			for(int j= 0; j < energy[0].length; j++){
+				
+				int val = (int)energy[i][j];
+				System.out.println(val);
+				
+				s.setPixel(i,  j, 256);
+				
+				
 			}
-			System.out.print("[");
 		}
 		
-		System.out.print("[");
-		
-		plot_seam(s,a);
-	
 		new ImageDisplay(s.img);
 		
-		s.TransPose();
+		//System.out.println("Max: " + max);
 		
-		plot_seam(s,a);
-		
-		new ImageDisplay(s.img);
+//		plot_seam(s,a);
+//	
+//		new ImageDisplay(s.img);
+//		
+//		s.TransPose();
+//		
+//		plot_seam(s,a);
+//		
+//		new ImageDisplay(s.img);
 		
 		
 		
