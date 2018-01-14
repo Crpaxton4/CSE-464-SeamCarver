@@ -74,7 +74,7 @@ public class SeamCarver {
 							break;
 						}
 						
-						if(col + k >= W) {
+						if(col +1 >= W) {
 							break;
 						}
 						redGradient[0] += img.getRed(col + k, row + l) * sobelHoriz[k+1][l+1];
@@ -88,9 +88,9 @@ public class SeamCarver {
 					}
 				}
 				
-				energyMap[col][row] = (float)( Math.sqrt(Math.pow(redGradient[0], 2) + Math.pow(redGradient[0], 2)) +
-											   Math.sqrt(Math.pow(blueGradient[0], 2) + Math.pow(blueGradient[0], 2)) +
-											   Math.sqrt(Math.pow(greenGradient[0], 2) + Math.pow(greenGradient[0], 2)));
+				energyMap[col][row] = (float)( Math.pow(redGradient[0], 2) + Math.pow(redGradient[0], 2) +
+											   Math.pow(blueGradient[0], 2) + Math.pow(blueGradient[0], 2) +
+											   Math.pow(greenGradient[0], 2) + Math.pow(greenGradient[0], 2));
 				
 				
 			}
@@ -154,11 +154,10 @@ public class SeamCarver {
 		for(int i = 0; i < energy.length; i++) {
 			for(int j= 0; j < energy[0].length; j++){
 				
-				int val = Pixel.getIntColor(energy[i][j], energy[i][j], energy[i][j]);
-				
+				int val = (int)energy[i][j];
 				System.out.println(val);
 				
-				s.setPixel(i,  j, val);
+				s.setPixel(i,  j, 16777125);
 				
 				
 			}
