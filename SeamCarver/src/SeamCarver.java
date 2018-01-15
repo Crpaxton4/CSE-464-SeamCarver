@@ -70,11 +70,11 @@ public class SeamCarver {
 				for(int k = -1; k <= 1; k++) {
 					for(int l = -1; l <= 1; l++) {
 						
-						if(row + l >= H) {
+						if(row + l >= H || row + l < 0) {
 							break;
 						}
 						
-						if(col + k >= W) {
+						if(col + k >= W || col + k < 0) {
 							break;
 						}
 						redGradient[0] += img.getRed(col + k, row + l) * sobelHoriz[k+1][l+1];
@@ -88,9 +88,9 @@ public class SeamCarver {
 					}
 				}
 				
-				energyMap[col][row] = (float)( Math.sqrt(Math.pow(redGradient[0], 2) + Math.pow(redGradient[0], 2)) +
-											   Math.sqrt(Math.pow(blueGradient[0], 2) + Math.pow(blueGradient[0], 2)) +
-											   Math.sqrt(Math.pow(greenGradient[0], 2) + Math.pow(greenGradient[0], 2)));
+				energyMap[col][row] = (float)( Math.pow(redGradient[0], 2) + Math.pow(redGradient[1], 2) +
+											   Math.pow(blueGradient[0], 2) + Math.pow(blueGradient[1], 2) +
+											   Math.pow(greenGradient[0], 2) + Math.pow(greenGradient[1], 2));
 				
 				
 			}
@@ -141,11 +141,12 @@ public class SeamCarver {
 	}
 	
 	static int map(float x, float in_min, float in_max, int out_min, int out_max) {
-		return (int) Math.floor((Math.log(x)*10 - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+		return (int) Math.floor((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 	}
 	
 	public static void main(String[] args) {
 		ImageData s =  new ImageData("Test.jpg");
+		
 		int[] a = new int[2];
 		
 		float[][] energy = dual_gradient_energy(s);
@@ -154,7 +155,7 @@ public class SeamCarver {
 		for(int i = 0; i < energy.length; i++) {
 			for(int j= 0; j < energy[0].length; j++){
 				
-				int val = Pixel.getIntColor(energy[i][j], energy[i][j], energy[i][j]);
+				 int val = Pixel.getIntColor(energy[i][j], energy[i][j], energy[i][j]);
 				
 				System.out.println(val);
 				
