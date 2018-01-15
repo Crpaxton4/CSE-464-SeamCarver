@@ -12,6 +12,7 @@
 		<list key="textArray">
 		</list>
 	</section>
+<<<<<<< HEAD
 	<section name="NewWizardAction">
 		<item value="org.eclipse.jdt.ui.wizards.JavaProjectWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
 		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
@@ -20,4 +21,6 @@
 	</section>
 	<section name="ImportExportAction">
 	</section>
+=======
+>>>>>>> 08fab08927b6e3072163f0259dc3510191657a97
 </section>
