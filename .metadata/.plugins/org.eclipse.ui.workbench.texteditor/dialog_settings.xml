@@ -8,6 +8,7 @@
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="import java.awt.image.BufferedImage;"/>
 			<item value="&#x09;&#x09;int pixel;"/>
 			<item value="red"/>
 		</list>

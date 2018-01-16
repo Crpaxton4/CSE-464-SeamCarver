@@ -11,7 +11,7 @@ public class ImageDisplay extends JFrame implements KeyListener {
 	
 	ImageDisplay(BufferedImage img){
 		j = new JFrame();
-		j.setSize(img.getHeight(), img.getWidth());
+		j.setSize(img.getWidth(), img.getHeight());
 		
 		j.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		JPanel pane = new JPanel() {

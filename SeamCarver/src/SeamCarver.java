@@ -2,7 +2,12 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Random;
 
+import javax.swing.plaf.synth.SynthSplitPaneUI;
+
 public class SeamCarver {
+
+	static String imgPath = "Coral.jpg";
+	static int removePixels = 300;
 
 	static float[][] dual_gradient_energy(ImageData img) {
 		// TODO
@@ -95,14 +100,12 @@ public class SeamCarver {
 		// This can be implemented using dynamic programming. Similar to the rod cutting
 		// problem, just with minimum instead of maximum
 		int height = img.getHeight(); // rows
-		int width = img.getWidth();  // cols
+		int width = img.getWidth(); // cols
 
 		float[][] energyMap = dual_gradient_energy(img);
 
 		float[][] seamSums = new float[width][height];
-		System.out.println("EnergyGradient: cols = " + energyMap.length + " : rows = " + energyMap[0].length);
-		System.out.println("SeamSums: cols = " + seamSums.length + " : rows = " + seamSums[0].length);
-		
+
 		for (int x = 0; x < width; x++) { // Set base values to build up from
 			seamSums[x][0] = energyMap[x][0];
 		}
@@ -140,23 +143,23 @@ public class SeamCarver {
 				seam[height - 1] = k;
 			}
 		}
-		
-		for(int row = height-2; row >= 0; row--) {
-			min = Float.MIN_VALUE; // Reuse the same variable. No reason why there couldn't be a ew one
-			
-			for(int i = -1; i <=1; i++) {
-				if(seam[row+1] + i < 0 || seam[row+1] + i >= width) { // if the offset puts the index out of bounds, skip it
-					System.out.println("continue");
+
+		for (int row = height - 2; row >= 0; row--) {
+			min = Float.MAX_VALUE; // Reuse the same variable. No reason why there couldn't be a ew one
+
+			for (int i = -1; i <= 1; i++) {
+
+				if (seam[row + 1] + i < 0 || seam[row + 1] + i >= width) { // if the offset puts the index out of
+																			// bounds, skip it
 					continue;
-					
+
 				}
-				
-				int prevCol = seam[row+1];
-				
-				if(seamSums[prevCol+i][row] < min) {
-					min = seamSums[prevCol+i][row];
-					seam[row] = prevCol+i;
-					System.out.println("Prev col = " + prevCol + ", i = " + i);
+
+				int prevCol = seam[row + 1];
+
+				if (seamSums[prevCol + i][row] < min) {
+					min = seamSums[prevCol + i][row];
+					seam[row] = prevCol + i;
 				}
 			}
 		}
@@ -167,17 +170,25 @@ public class SeamCarver {
 	static void plot_seam(ImageData img, int[] seam) {
 		for (int y = 0; y < img.getHeight(); y++) {
 
-			
-			
-
 			img.setPixel(seam[y], y, Pixel.getIntColor(1.0f, 0.0f, 0.0f));
 		}
 
 	}
 
-	void remove_seam(ImageData img, int[] seam) {
-		// TODO
-
+	static void remove_seam(ImageData img, int[] seam) {
+		int height = img.getHeight();
+		
+		int origWidth = img.getWidth();
+		int newWidth = origWidth-1;
+		
+		for(int row = 0; row < height; row++) {			
+			
+			for(int newColumn = seam[row], origColumn = seam[row] + 1; newColumn < newWidth; newColumn++, origColumn++) {
+				img.setPixel(newColumn, row, img.getPixel(origColumn, row));
+			}
+		}
+		
+		img.trimRight();
 	}
 
 	static float max(float[][] a) {
@@ -198,30 +209,46 @@ public class SeamCarver {
 	}
 
 	public static void main(String[] args) {
-		ImageData s = new ImageData("Test.jpg");
+		ImageData s = new ImageData(imgPath);
 
-		int[] a = new int[2];
-
-//		float[][] energy = dual_gradient_energy(s);
-//		// float max = max(energy);
-//
-//		for (int i = 0; i < energy.length; i++) {
-//			for (int j = 0; j < energy[0].length; j++) {
-//
-//				int val = Pixel.getIntColor(energy[i][j], energy[i][j], energy[i][j]);
-//
-//				System.out.println(val);
-//
-//				s.setPixel(i, j, val);
-//
-//			}
-//		}
-
+		// float[][] energy = dual_gradient_energy(s);
+		// // float max = max(energy);
+		//
+		// for (int i = 0; i < energy.length; i++) {
+		// for (int j = 0; j < energy[0].length; j++) {
+		//
+		// int val = Pixel.getIntColor(energy[i][j], energy[i][j], energy[i][j]);
+		//
+		// System.out.println(val);
+		//
+		// s.setPixel(i, j, val);
+		//
+		// }
+		// }
 		
-		int[] seam = find_seam(s);
-		System.out.println(Arrays.toString(seam));
-		plot_seam(s, seam);
+		
+		
+		int[][] seams = new int[removePixels][s.getHeight()];
+		//s.TransPose();
+
 		new ImageDisplay(s.img);
+		
+		for(int i = 0; i < removePixels; i ++) {
+			System.out.println(i);
+			seams[i] = find_seam(s);
+			remove_seam(s, seams[i]);
+		}
+		
+		new ImageDisplay(s.img);
+		
+		ImageData plot = new ImageData(imgPath);
+		//plot.TransPose();
+		
+		for(int[] seam : seams) {			
+			plot_seam(plot, seam);
+		}
+		
+		new ImageDisplay(plot.img);
 
 		// System.out.println("Max: " + max);
 
